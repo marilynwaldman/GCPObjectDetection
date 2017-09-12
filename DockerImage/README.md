@@ -2,11 +2,12 @@
  
 ## Build the Dockerfile and upload it to GCP.  Instruction found [here](https://cloud.google.com/container-builder/docs/quickstarts/dockerfile)
 
-1.  cd to this directory 
+cd to this directory 
      cd DockerImage
+     ls -l
      
-2.  you should see Dockerfile - it will built an uploaded to GCP.
-    ls -l
+You should see Dockerfile - it will built an uploaded to GCP.
+  
 
 ### Log in to Google Cloud
 
