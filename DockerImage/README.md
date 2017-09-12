@@ -8,9 +8,9 @@
 ## Log in to Google Cloud
 
 Authorize gcloud to access your project:
-    ```
+    
     gcloud auth login
-    ```
+    
 Configure your project for gcloud, where [PROJECT-ID] is your Cloud Platform project ID:
    ```
     gcloud config set project [PROJECT_ID]
