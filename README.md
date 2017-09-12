@@ -1,11 +1,11 @@
 
 
-1.  git clone 
+1.  git clone git@github.com:marilynwaldman/GCPObjectDetection.git
 2. gcloud compute instances create object-detection \
-   --image-family container-vm \
+   --image-family gci-stable \
    --image-project google-containers \
    --zone us-central1-b --boot-disk-size=100GB \
-   --machine-type n1-standard-1
+   --machine-type n1-standard-4
 
 3. gcloud compute firewall-rules create object-detection --allow tcp:8888,tcp:6006,tcp:5000
 
