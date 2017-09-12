@@ -24,13 +24,15 @@ If you don't know your project ID, run the following command:
 
 
 To submit a build request using your Dockerfile, run the following command from the directory containing your application code, Dockerfile, and any other assets:
-     ```
-     gcloud container builds submit --tag gcr.io/[PROJECT-ID]/[IMAGE] .
-     ```
-     where
 
-     [PROJECT-ID] is your Cloud Platform project ID
-     [IMAGE] is object-detect or whatever you want to name your docker image.
+    ```
+    gcloud container builds submit --tag gcr.io/[PROJECT-ID]/[IMAGE] .
+    ```
+where
+
+[PROJECT-ID] is your Cloud Platform project ID
+[IMAGE] is object-detect or whatever you want to name your docker image.
+
      
 
 
