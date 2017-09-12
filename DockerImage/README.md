@@ -12,22 +12,22 @@ Authorize gcloud to access your project:
     gcloud auth login
     
 Configure your project for gcloud, where [PROJECT-ID] is your Cloud Platform project ID:
-   ```
+  
     gcloud config set project [PROJECT_ID]
-    ```
+   
 If you don't know your project ID, run the following command:
-    ```
+  
     gcloud projects list
-    ```
+  
 
 ## Build and push your Dockerfile to GCP
 
 
 To submit a build request using your Dockerfile, run the following command from the directory containing your application code, Dockerfile, and any other assets:
 
-    ```
+
     gcloud container builds submit --tag gcr.io/[PROJECT-ID]/[IMAGE] .
-    ```
+
 where
 
 [PROJECT-ID] is your Cloud Platform project ID
