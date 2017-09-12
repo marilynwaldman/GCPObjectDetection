@@ -1,16 +1,18 @@
 
-# TensorFlow on Cloud Machine Learning: Setup in a cloud-based environment
+# Training an object detector using Cloud Machine Learning Engine from Google Cloud
 
-If you’re unfamiliar with Google Cloud Platform, and/or would rather do the exercises in this workshop in a cloud environment, follow these steps for initial setup.
+The [tutorial](https://cloud.google.com/blog/big-data/2017/06/training-an-object-detector-using-cloud-machine-learning-engine) is written on a Ubuntu platform.  This repo creates a docker image and container image on GCP to run the 
+tutorial on.  All dependencies are loaded into the docker image.  You will not need to issue apt-get or pip commands from the docker image.
 
-(Alternative setup flows for local installation can be found [here](INSTALL.md).)
 
 Here's an overview of what you'll do:
 
-- Create a new project (as necessary).
+- Create a free account on Google Cloud or use an exiting account.
+- Create a new project on Google Cloud.
+- Upload and build a docker image to Google Cloud.
 - Create a "container-optimized" VM and ssh to it.
-- Start a docker container running on the VM. You'll find the example code in `tensorflow-workshop-master`.
-- Then, in the running docker container, you'll do some auth and setup.
+- Start a docker container running on the VM. 
+- Then, in the running docker container, run the [tutorial](https://cloud.google.com/blog/big-data/2017/06/training-an-object-detector-using-cloud-machine-learning-engine)
 
 ## Prerequsites:
 
@@ -55,27 +57,87 @@ Run commands 3-6 below in the Cloud Shell.
 ### 3. Initialize Cloud ML for your project
 
 ```shell
-gcloud beta ml init-project
+gcloud beta ml vision
 ```
 
 Respond "Y" when asked.
 
-### 4. Set up your Cloud Storage Bucket
+### 4. Set up your Cloud Storage Bucket and upload the Dockerfile
 
 ```shell
 PROJECT_ID=$(gcloud config list project --format "value(core.project)")
 BUCKET_NAME=${PROJECT_ID}-ml
 gsutil mb -l us-central1 gs://$BUCKET_NAME
 ```
+##### Build and upload the Dockerfile
+
+# Use a Docker File on Google Cloud Platform Container Image
+ 
+#### Build the Dockerfile and upload it to GCP.  Instruction found [here](https://cloud.google.com/container-builder/docs/quickstarts/dockerfile)
+
+git clone this repo:
+
+    git clone https://github.com/marilynwaldman/GCPObjectDetection.git
+    cd GCPObjectDetection  
+
+#### Log in to Google Cloud
+
+Authorize gcloud to access your project:
+    
+    gcloud auth login
+    
+Configure your project for gcloud, where [PROJECT-ID] is your Cloud Platform project ID:
+  
+    gcloud config set project [PROJECT_ID]
+   
+If you don't know your project ID, run the following command:
+  
+    gcloud projects list
+  
+
+#### Build and push your Dockerfile to GCP
+
+
+To submit a build request using your Dockerfile, run the following command from the directory containing your application code, Dockerfile, and any other assets:
+
+
+    gcloud container builds submit --tag gcr.io/[PROJECT-ID]/object-detect .
+
+where
+
+[PROJECT-ID] is your Cloud Platform project ID
+
+
+Check that your image is built on GCP. Run the following command:
+
+    gcloud container images list
+
+
+### Make the docker image available to container instances.  
+
+Per instructions [here](https://cloud.google.com/container-registry/docs/access-control)
+
+Display your project's Cloud Storage buckets:
+
+    gsutil ls
+
+Mark all current objects, including the image you just pushed, in your registry public by running the following command in your shell or terminal window:
+
+    gsutil acl ch -r -u AllUsers:READ gs://artifacts.[PROJECT-ID].appspot.com
+
+Make your registry's bucket publicly accessible:
+
+    gsutil acl ch -u AllUsers:READ gs://artifacts.[PROJECT-ID].app
+
 
 ### 5. Create a container-optimized image in GCE
 
 ```shell
-gcloud compute instances create mlworkshop \
+gcloud compute instances create object-detect \
     --image-family gci-stable \
     --image-project google-containers \
     --zone us-central1-b --boot-disk-size=100GB \
-    --machine-type n1-standard-1
+    --machine-type n1-standard-4
 ```
 
 You can ignore the "I/O performance warning for disks < 200GB" for this example; it is not important in this context.
@@ -83,7 +145,7 @@ You can ignore the "I/O performance warning for disks < 200GB" for this example;
 ### 6. Set up a firewall rule for your project that will allow access to the web services we will run
 
 ```shell
-gcloud compute firewall-rules create mlworkshop --allow tcp:8888,tcp:6006,tcp:5000
+gcloud compute firewall-rules create object-detect --allow tcp:8888,tcp:6006,tcp:5000
 ```
 
 ### 7. SSH into the new GCE instance, in a new browser window
@@ -92,16 +154,16 @@ gcloud compute firewall-rules create mlworkshop --allow tcp:8888,tcp:6006,tcp:50
 - Find your instance in the list (mid-page) and click on the “SSH” pulldown menu on the right. Select “Open in browser window”.
 - A new browser window will open, with a command line into your GCE instance.
 
-### 8. Start the Docker container in the GCE image (in the newly opened SSH browser window):
+### 8. Build the docker image and upload to GCP, then start the Docker container in the GCE image (in the newly opened SSH browser window):
 
 ```shell
-docker pull gcr.io/google-samples/tf-workshop:v5
-mkdir workshop-data
-docker run -v `pwd`/workshop-data:/root/tensorflow-workshop-master/workshop-data -it \
-    -p 6006:6006 -p 8888:8888 -p 5000:5000 gcr.io/google-samples/tf-workshop:v5
+docker pull gcr.io/[Project-id]/object-detector
+docker run -it -p 6006:6006 -p 8888:8888 -p 5000:5000 gcr.io/[Project_id}/object-detector
 ```
 
-Then, run the following in the Docker container.
+You should be issued a prompt from the docker shell.
+
+Run the following in the Docker container - at the root***# prompt.
 
 ### 9. Configure the Docker container. You’ll need your project ID for this step.
 
@@ -127,12 +189,6 @@ gcloud beta auth application-default login
 ```
 (and follow the subsequent instructions)
 
-### 10. Copy some data for the 'transfer learning' example to your bucket:
-
-```shell
-gsutil cp -r gs://tf-ml-workshop/transfer_learning/hugs_preproc_tfrecords $BUCKET
-GCS_PATH=$BUCKET/hugs_preproc_tfrecords
-```
 
 ## If you need to restart the container later
 
@@ -162,24 +218,7 @@ Some of the labs have you run a jupyter or Tensorboard server.  Instead of using
 
 Once you’re done with your VM, you can stop or delete it. If you think you might return to it later, you might prefer to just stop it. (A stopped instance does not incur charges, but all of the resources that are attached to the instance will still be charged).  You can do this from the [cloud console](https://console.cloud.google.com), or via command line from the Cloud Shell as follows:
 
-```shell
-gcloud compute instances delete --zone us-central1-b mlworkshop
-```
-Or:
 
-```shell
-gcloud compute instances stop --zone us-central1-b mlworkshop
-```
-Then later:
-
-```shell
-gcloud compute instances start --zone us-central1-b mlworkshop
-```
-Delete the firewall rule as well:
-
-```shell
-gcloud compute firewall-rules delete mlworkshop
-```
 
 1. gcloud compute instances create object-detection \
    --image-family gci-stable \
