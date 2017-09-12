@@ -13,14 +13,10 @@
 # limitations under the License.
 FROM gcr.io/tensorflow/tensorflow:latest-devel
 
-sudo apt-get install protobuf-compiler python-pil python-lxml
-sudo pip install jupyter
-sudo pip install matplotlib
-
 RUN pip install --upgrade pip
 RUN apt-get update
 RUN apt-get install -y unzip python-dev python-pip zlib1g-dev libjpeg-dev libblas-dev
-RUN apt-get install protobuf-compiler python-pil python-lxml
+RUN apt-get install -y protobuf-compiler python-pil python-lxml
 RUN apt-get install -y git wget
 
 RUN pip install jupyter
