@@ -38,7 +38,7 @@ If you already have an account, and have run through your trial credits, see one
 1. On the left nav, choose "Dashboard" if not already selected, then choose "+Enable API" in the top-middle of page.
 1. Enter "Google Compute Engine API" in the search box and click it when it appears in the list of results.
 1. Click on “Enable” (top-middle of page).
-1. Repeat steps 2 through 4 for: "Google Dataflow API" and "Google Cloud Machine Learning".
+1. Repeat steps 2 through 4 for: "Google Cloud Container Builder API" and "Google Cloud Machine Learning".
 
 ![Hamburger menu](./assets/hamburger.png)  
 
@@ -57,7 +57,7 @@ Run commands 3-6 below in the Cloud Shell.
 ### 3. Initialize Cloud ML for your project
 
 ```shell
-gcloud beta ml vision
+gcloud  ml vision
 ```
 
 Respond "Y" when asked.
@@ -88,7 +88,7 @@ Authorize gcloud to access your project:
     
 Configure your project for gcloud, where [PROJECT-ID] is your Cloud Platform project ID:
   
-    gcloud config set project [PROJECT_ID]
+    gcloud config set project $PROJECT_ID
    
 If you don't know your project ID, run the following command:
   
@@ -101,7 +101,7 @@ If you don't know your project ID, run the following command:
 To submit a build request using your Dockerfile, run the following command from the directory containing your application code, Dockerfile, and any other assets:
 
 
-    gcloud container builds submit --tag gcr.io/[PROJECT-ID]/object-detect .
+    gcloud container builds submit --tag gcr.io/$PROJECT_ID/object-detect .
 
 where
 
@@ -123,12 +123,12 @@ Display your project's Cloud Storage buckets:
 
 Mark all current objects, including the image you just pushed, in your registry public by running the following command in your shell or terminal window:
 
-    gsutil acl ch -r -u AllUsers:READ gs://artifacts.[PROJECT-ID].appspot.com
+    gsutil acl ch -r -u AllUsers:READ gs://artifacts.$PROJECT_ID.appspot.com
+
 
 Make your registry's bucket publicly accessible:
 
-    gsutil acl ch -u AllUsers:READ gs://artifacts.[PROJECT-ID].app
-
+    gsutil acl ch -u AllUsers:READ gs://artifacts.$PROJECT_ID.appspot.com
 
 ### 5. Create a container-optimized image in GCE
 
@@ -157,8 +157,9 @@ gcloud compute firewall-rules create object-detect --allow tcp:8888,tcp:6006,tcp
 ### 8. Build the docker image and upload to GCP, then start the Docker container in the GCE image (in the newly opened SSH browser window):
 
 ```shell
-docker pull gcr.io/[Project-id]/object-detector
-docker run -it -p 6006:6006 -p 8888:8888 -p 5000:5000 gcr.io/[Project_id}/object-detector
+sudo docker pull gcr.io/[Project-id]/object-detect
+mkdir notebooks
+sudo docker run -v `pwd`/notebooks:/root/notebooks -it -p 6006:6006 -p 8888:8888 -p 5000:5000 gcr.io/[Project_id]/object-detect
 ```
 
 You should be issued a prompt from the docker shell.
@@ -172,11 +173,14 @@ Run the following in the Docker container - at the root***# prompt.
 In the following, replace `<your-project-ID>` with your actual project ID.
 
 ```shell
+
 gcloud config set project <your-project-ID>
 gcloud config set compute/region us-central1
 gcloud config set compute/zone us-central1-b
-PROJECT_ID=$(gcloud config list project --format "value(core.project)")
-BUCKET=gs://${PROJECT_ID}-ml
+
+PROJECT=$(gcloud config list project --format "value(core.project)")
+YOUR_GCS_BUCKET="gs://${PROJECT}-ml"
+
 ```
 
 ```shell
@@ -210,10 +214,8 @@ Note also that if you later start a separate new container 'from scratch', you w
 ## What next?
 
 You should now be set to run all of the workshop exercises from your docker container!
-Change to the `tensorflow-workshop-master` directory.
 
-Some of the labs have you run a jupyter or Tensorboard server.  Instead of using 'localhost', use the assigned IP for your VM.  You can find it in the cloud console by visiting the Compute Engine > VM Instances panel.
-
+From this docker container do not try to re-import dependencies with apt-get or pip. 
 ## Cleanup
 
 Once you’re done with your VM, you can stop or delete it. If you think you might return to it later, you might prefer to just stop it. (A stopped instance does not incur charges, but all of the resources that are attached to the instance will still be charged).  You can do this from the [cloud console](https://console.cloud.google.com), or via command line from the Cloud Shell as follows:
