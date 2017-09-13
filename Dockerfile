@@ -37,5 +37,5 @@ EXPOSE 8888
 # Flask
 EXPOSE 5000
 
-CMD ["sh", "-c", "python download_git_repo.py ; /bin/bash"]
+CMD ["sh", "-c" ; /bin/bash"]
 
