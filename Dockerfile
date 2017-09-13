@@ -13,29 +13,3 @@
 # limitations under the License.
 FROM gcr.io/tensorflow/tensorflow:latest-devel
 
-RUN pip install --upgrade pip
-RUN apt-get update
-RUN apt-get install -y unzip python-dev python-pip zlib1g-dev libjpeg-dev libblas-dev
-RUN apt-get install -y protobuf-compiler python-pil python-lxml
-RUN apt-get install -y git wget
-
-#RUN pip install jupyter
-RUN pip install matplotlib
-
-RUN pip install --upgrade --force-reinstall https://storage.googleapis.com/cloud-ml/sdk/cloudml.latest.tar.gz
-
-RUN curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-159.0.0-linux-x86_64.tar.gz | tar xvz
-RUN ./google-cloud-sdk/install.sh -q
-RUN ./google-cloud-sdk/bin/gcloud components install beta
-
-ENV PATH="${PATH}:/root/google-cloud-sdk/bin"
-
-# TensorBoard
-EXPOSE 6006
-# IPython
-EXPOSE 8888
-# Flask
-EXPOSE 5000
-
-#CMD ["sh", "-c" ; /bin/bash"]
-
