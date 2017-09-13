@@ -19,7 +19,7 @@ RUN apt-get install -y unzip python-dev python-pip zlib1g-dev libjpeg-dev libbla
 RUN apt-get install -y protobuf-compiler python-pil python-lxml
 RUN apt-get install -y git wget
 
-RUN pip install jupyter
+#RUN pip install jupyter
 RUN pip install matplotlib
 
 RUN pip install --upgrade --force-reinstall https://storage.googleapis.com/cloud-ml/sdk/cloudml.latest.tar.gz
