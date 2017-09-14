@@ -37,5 +37,5 @@ EXPOSE 8888
 # Flask
 EXPOSE 5000
 
-CMD ["sh", "-c" ; /bin/bash"]
+CMD ["sh", "-c" ; "/bin/bash"]
 
