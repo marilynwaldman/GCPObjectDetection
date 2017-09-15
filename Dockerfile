@@ -19,6 +19,15 @@ RUN apt-get install -y unzip python-dev python-pip zlib1g-dev libjpeg-dev libbla
 RUN apt-get install -y protobuf-compiler python-pil python-lxml
 RUN apt-get install -y git wget
 
+
+RUN apt-get install -y liblapack-dev libatlas-base-dev libsnappy-dev libyaml-dev gfortran
+RUN apt-get install -y python-scipy
+
+RUN pip install sklearn nltk pillow setuptools
+RUN pip install flask google-api-python-client
+RUN pip install pandas python-snappy scipy scikit-learn requests uritemplate
+RUN pip install --upgrade --force-reinstall https://storage.googleapis.com/cloud-ml/sdk/cloudml.latest.tar.gz
+
 RUN pip install jupyter
 RUN pip install matplotlib
 
@@ -28,9 +37,10 @@ RUN curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud
 RUN ./google-cloud-sdk/install.sh -q
 RUN ./google-cloud-sdk/bin/gcloud components install beta
 
-ENV PATH="${PATH}:/root/google-cloud-sdk/bin"
+
 RUN git clone https://github.com/tensorflow/models.git
 
+ENV PATH="${PATH}:/root/google-cloud-sdk/bin"
 
 # TensorBoard
 EXPOSE 6006
