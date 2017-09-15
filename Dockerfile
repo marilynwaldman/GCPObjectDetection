@@ -33,9 +33,11 @@ RUN pip install matplotlib
 
 RUN pip install --upgrade --force-reinstall https://storage.googleapis.com/cloud-ml/sdk/cloudml.latest.tar.gz
 
-RUN curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-159.0.0-linux-x86_64.tar.gz | tar xvz
-RUN ./google-cloud-sdk/install.sh -q
-RUN ./google-cloud-sdk/bin/gcloud components install beta
+#RUN curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-159.0.0-linux-x86_64.tar.gz | tar xvz
+#RUN ./google-cloud-sdk/install.sh -q
+#RUN ./google-cloud-sdk/bin/gcloud components install beta
+
+RUN curl -sSL https://sdk.cloud.google.com | bash
 
 
 RUN git clone https://github.com/tensorflow/models.git
