@@ -78,8 +78,8 @@ gsutil mb -l us-central1 gs://$BUCKET_NAME
 
 git clone this repo:
 
-    git clone https://github.com/marilynwaldman/GCPObjectDetection.git
-    cd GCPObjectDetection  
+    git clone https://github.com/marilynwaldman/mountain_lion_data.git
+    cd  mountain_lion_data 
 
 #### Log in to Google Cloud
 
@@ -192,8 +192,23 @@ gcloud auth login
 ```shell
 gcloud beta auth application-default login
 ```
-(and follow the subsequent instructions)
+(and follow the subsequent instructions as in the [tutorial](https://cloud.google.com/blog/big-data/2017/06/training-an-object-detector-using-cloud-machine-learning-engine))
 
+## If you need to restart the container later
+
+If you wish to start a jupyter notebook, change directories appropriately then issue:
+
+```shell
+/run_jupyter.sh --allow-root
+```
+Once the workshop container is running again, you can exec back into it like this:
+
+```shell
+docker exec -it <container_id> bash
+```
+
+Note that you may need to define environment variables from step 9 when you reconnect.
+Note also that if you later start a separate new container 'from scratch', you will need to repeat the auth setup.
 
 ## If you need to restart the container later
 
@@ -223,24 +238,3 @@ Once you’re done with your VM, you can stop or delete it. If you think you mig
 
 
 
-1. gcloud compute instances create object-detection \
-   --image-family gci-stable \
-   --image-project google-containers \
-   --zone us-central1-b --boot-disk-size=100GB \
-   --machine-type n1-standard-4
-
-2. gcloud compute firewall-rules create object-detection --allow tcp:8888,tcp:6006,tcp:5000
-
-3.  git clone git@github.com:marilynwaldman/GCPObjectDetection.git
-    cd GCP*
-    cd GCP*
-    docker build ObjectDetect .
-    docker images
-    docker run -p 6006:6006 -p 8888:8888 -p 5000:5000 object-detection
-
-imperial-octane-178819
-
-
-sudo docker run -p 6006:6006 -p 8888:8888 -p 5000:5000 gcr.io/tensorflow/tensorflow
-
-open new terminal ssh

@@ -27,8 +27,10 @@ RUN pip install --upgrade --force-reinstall https://storage.googleapis.com/cloud
 RUN curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-159.0.0-linux-x86_64.tar.gz | tar xvz
 RUN ./google-cloud-sdk/install.sh -q
 RUN ./google-cloud-sdk/bin/gcloud components install beta
-
+RUN git clone https://github.com/tensorflow/models.git
 ENV PATH="${PATH}:/root/google-cloud-sdk/bin"
+RUN git clone https://github.com/tensorflow/models.git
+
 
 # TensorBoard
 EXPOSE 6006
@@ -37,5 +39,5 @@ EXPOSE 8888
 # Flask
 EXPOSE 5000
 
-CMD ["sh", "-c" , "/bin/bash"]
+CMD ["sh", "-c", "/bin/bash"]
 
